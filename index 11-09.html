@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Astra | Operaciones críticas con visión, control y seguridad</title>
+<meta name="description" content="Astra: solución de digitalización de contratos y solicitudes con ciberseguridad integrada desde el diseño." />
+<style>
+  :root{
+    --navy:#061423;
+    --navy2:#0b2440;
+    --cyan:#15d4ff;
+    --cyan2:#6ee7ff;
+    --blue:#1695ff;
+    --text:#e7f1fb;
+    --muted:#9eb3c7;
+    --card:#f7fbff;
+    --line:#d7e4f0;
+    --darkText:#0f2238;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family: Inter, Segoe UI, Arial, sans-serif;
+    background: linear-gradient(180deg,#05101c 0%, #071b2f 100%);
+    color:var(--text);
+  }
+  .hidden{display:none !important}
+  .gate-bg{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(21,212,255,.16), transparent 28%),
+      radial-gradient(circle at 88% 18%, rgba(22,149,255,.12), transparent 24%),
+      linear-gradient(135deg,#04111f 0%,#0a1d33 42%,#082847 100%);
+    position:relative;
+    overflow:hidden;
+  }
+  .grid{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.05));
+    opacity:.45;
+  }
+  .gate-wrap{
+    max-width:1180px;
+    margin:auto;
+    min-height:100vh;
+    padding:40px 24px;
+    display:grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap:34px;
+    align-items:center;
+    position:relative;
+    z-index:1;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:24px;
+  }
+  .logo-mark{
+    width:58px;height:58px;border-radius:16px;
+    background:linear-gradient(135deg,#1ae2ff,#0b72ff);
+    box-shadow:0 0 24px rgba(21,212,255,.25);
+    display:grid;place-items:center;
+    font-size:34px;font-weight:900;color:#03203d;
+  }
+  .logo-text{
+    font-size:42px;
+    font-weight:800;
+    letter-spacing:-.03em;
+    color:#3bd7ff;
+  }
+  .eyebrow{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.18em;
+    color:#7ddcff;
+    font-weight:800;
+    margin-bottom:14px;
+  }
+  h1{
+    font-size:58px;
+    line-height:1.01;
+    letter-spacing:-.04em;
+    margin:0 0 18px;
+    max-width:780px;
+  }
+  h1 .accent{color:#33ddff}
+  .lead{
+    font-size:19px;
+    line-height:1.6;
+    color:#d7e8f7;
+    max-width:730px;
+  }
+  .chips{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;
+  }
+  .chip{
+    padding:10px 14px;
+    border:1px solid rgba(110,231,255,.22);
+    border-radius:999px;
+    color:#d6f7ff;
+    background:rgba(255,255,255,.04);
+    font-size:14px;
+  }
+  .quote{
+    margin-top:22px;
+    padding:16px 18px;
+    border-left:4px solid var(--cyan);
+    border-radius:10px;
+    background:rgba(255,255,255,.06);
+    color:#e8f6ff;
+    max-width:760px;
+    font-size:15px;
+  }
+  .login-card{
+    background:rgba(7,24,42,.88);
+    border:1px solid rgba(110,231,255,.12);
+    border-radius:22px;
+    padding:28px;
+    box-shadow: 0 30px 70px rgba(0,0,0,.35);
+    backdrop-filter: blur(12px);
+  }
+  .panel-top{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;
+  }
+  .status-pill{
+    padding:8px 12px;border-radius:999px;background:rgba(21,212,255,.10);
+    border:1px solid rgba(21,212,255,.24); color:#9cf0ff; font-size:12px; font-weight:700;
+  }
+  .panel-title{
+    font-size:26px;font-weight:800;line-height:1.1;margin:0 0 10px;
+  }
+  .panel-copy{
+    color:#bdd0e2;font-size:15px;line-height:1.6;margin-bottom:18px;
+  }
+  .input-wrap{
+    display:flex;gap:10px;align-items:center;margin:14px 0 8px;
+  }
+  input[type=password], input[type=text]{
+    width:100%;
+    padding:15px 16px;
+    font-size:18px;
+    border-radius:14px;
+    border:1px solid rgba(175,214,242,.25);
+    outline:none;
+    background:#071629;
+    color:white;
+  }
+  input::placeholder{color:#7b93aa}
+  .btn{
+    border:none;cursor:pointer;
+    padding:15px 18px;
+    border-radius:14px;
+    font-weight:800;font-size:15px;
+    transition:.2s transform ease,.2s opacity ease;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:linear-gradient(135deg,#21dbff,#1997ff); color:#032037; min-width:138px}
+  .hint{
+    color:#97b3ca;font-size:13px;margin-top:8px;
+  }
+  .mini-list{
+    margin-top:20px;
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  }
+  .mini-card{
+    padding:14px 14px;border-radius:14px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.06);
+  }
+  .mini-card b{display:block;color:#eaf7ff;font-size:14px;margin-bottom:5px}
+  .mini-card span{color:#a9c1d6;font-size:13px;line-height:1.45}
+  .message{
+    min-height:20px;
+    margin-top:10px;
+    font-size:14px;
+    font-weight:600;
+  }
+  .message.error{color:#ffb3b3}
+  .message.ok{color:#8ef4bf}
+  .footer-note{
+    margin-top:16px;font-size:12px;color:#94abc0;
+  }
+
+  /* Site */
+  #site{
+    background:#ffffff;
+    color:var(--darkText);
+  }
+  .container{max-width:1160px;margin:auto;padding:0 24px}
+  .site-nav{
+    background:#08192c;color:white;border-bottom:1px solid rgba(255,255,255,.05);
+    position:sticky;top:0;z-index:10;
+  }
+  .site-nav .row{
+    height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-size:32px;font-weight:800;color:#27d8ff}
+  .brand small{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#83e8ff}
+  .nav-links{display:flex;gap:24px;align-items:center}
+  .nav-links a{color:#ddecf8;text-decoration:none;font-size:14px}
+  .nav-btn{
+    text-decoration:none;background:linear-gradient(135deg,#23dcff,#1597ff);color:#06233d;
+    padding:12px 18px;border-radius:12px;font-weight:800;font-size:14px;
+  }
+  .hero{
+    background:
+      radial-gradient(circle at 76% 22%, rgba(42,223,255,.18), transparent 26%),
+      linear-gradient(180deg,#071a2d 0%, #0b2a4b 100%);
+    color:#fff;padding:72px 0 58px;
+  }
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:34px;align-items:center}
+  .hero h2{
+    font-size:54px;line-height:1.02;letter-spacing:-.04em;margin:14px 0 16px;max-width:760px
+  }
+  .hero h2 .accent{color:#33ddff}
+  .hero p{font-size:19px;line-height:1.6;color:#d7e8f7;max-width:680px}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+  .hero .primary,.hero .ghost{
+    display:inline-block;padding:14px 20px;border-radius:14px;font-weight:800;text-decoration:none
+  }
+  .hero .primary{background:linear-gradient(135deg,#1be1ff,#1797ff);color:#03223e}
+  .hero .ghost{border:1px solid rgba(110,231,255,.35);color:#e7f8ff;background:rgba(255,255,255,.04)}
+  .hero-note{
+    margin-top:22px;padding:15px 16px;border-left:4px solid #21d8ff;border-radius:10px;
+    background:rgba(255,255,255,.07);max-width:760px;font-size:15px;color:#ebf8ff
+  }
+  .dashboard{
+    background:#ffffff;border-radius:24px;padding:18px;
+    box-shadow:0 26px 70px rgba(0,0,0,.28);
+    transform:perspective(1400px) rotateY(-8deg) rotateX(3deg);
+  }
+  .dashboard-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .dashboard-title b{font-size:22px;color:#0b2542}
+  .dashboard-title span{font-size:12px;color:#67809a}
+  .kpis{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  }
+  .kpi{
+    border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff
+  }
+  .kpi b{display:block;color:#0c2744;font-size:24px;margin-bottom:5px}
+  .kpi span{font-size:11px;color:#65819b;line-height:1.3}
+  .dashboard-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:12px;margin-top:12px}
+  .dash-card{
+    border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff
+  }
+  .dash-card h4{margin:0 0 8px;font-size:14px;color:#10304f}
+  .bars{display:flex;align-items:flex-end;gap:8px;height:116px}
+  .bar{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#67dcff,#1f88ff)}
+  .donut{
+    width:96px;height:96px;border-radius:50%;
+    background: conic-gradient(#1695ff 0 58%, #2dddb8 58% 82%, #f7bf4d 82% 94%, #dee8f0 94% 100%);
+    position:relative;margin:8px auto 0;
+  }
+  .donut::after{
+    content:"72";
+    position:absolute;inset:19px;border-radius:50%;background:#fff;
+    display:grid;place-items:center;font-weight:900;color:#0c2744;font-size:22px;
+  }
+  section{padding:64px 0}
+  .alt{background:#f7fbff}
+  .section-title{font-size:35px;color:#0b2744;margin:0 0 10px}
+  .section-copy{font-size:17px;color:#587086;max-width:850px;margin-bottom:26px;line-height:1.6}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;
+    box-shadow:0 8px 24px rgba(8,37,63,.045)
+  }
+  .icon{
+    width:46px;height:46px;border-radius:14px;background:#ecf8ff;color:#1598ff;
+    display:grid;place-items:center;font-weight:900;margin-bottom:12px
+  }
+  .card h3{margin:0 0 8px;font-size:17px;color:#0e2948}
+  .card p{margin:0;color:#62788a;font-size:14px;line-height:1.55}
+  .band{
+    background:linear-gradient(90deg,#071d34,#0b3560);color:#fff;
+  }
+  .flow{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:18px;
+  }
+  .step{text-align:center;position:relative}
+  .step:not(:last-child)::after{
+    content:"→";position:absolute;right:-10px;top:17px;color:#7fdcff;font-weight:800
+  }
+  .step .n{
+    width:50px;height:50px;border-radius:50%;
+    background:#0d87cf;color:white;display:grid;place-items:center;
+    margin:0 auto 10px;font-weight:900
+  }
+  .step b{display:block;font-size:14px;margin-bottom:5px}
+  .step span{font-size:13px;color:#d8e8f6;line-height:1.45}
+  .statement{
+    display:grid;grid-template-columns: auto 1fr auto auto auto; gap:16px; align-items:center;
+    padding:22px 26px;border-radius:18px;background:linear-gradient(90deg,#081b31,#0d355e);
+    color:white;border:1px solid rgba(127,220,255,.16);margin-top:-28px;position:relative;z-index:2;
+    box-shadow:0 20px 40px rgba(5,16,28,.24);
+  }
+  .statement .shield{
+    width:74px;height:74px;border-radius:18px;background:rgba(255,255,255,.08);
+    display:grid;place-items:center;font-size:36px
+  }
+  .statement h3{
+    margin:0;font-size:29px;line-height:1.08;letter-spacing:-.03em
+  }
+  .statement h3 .accent{color:#33ddff}
+  .statement .mini{
+    padding-left:16px;border-left:1px solid rgba(255,255,255,.12);
+    font-size:14px;color:#d8edf8
+  }
+  .risk-table{
+    width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;
+    border:1px solid var(--line)
+  }
+  .risk-table th,.risk-table td{
+    padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;font-size:14px
+  }
+  .risk-table th{background:#eff7fd;color:#0e2948}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .tools{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .tool{
+    text-align:center;padding:18px 14px;border-radius:16px;background:#fff;border:1px solid var(--line)
+  }
+  .tool b{display:block;margin-top:8px;color:#0f2c4b;font-size:14px}
+  .tool span{display:block;margin-top:6px;color:#637a8c;font-size:13px;line-height:1.45}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .metric{
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px
+  }
+  .metric b{display:block;font-size:16px;color:#0e2948;margin-bottom:8px}
+  .metric p{margin:0;color:#62788a;font-size:14px;line-height:1.55}
+  .callout{
+    background:#ebf8ff;border:1px solid #bdeeff;border-radius:16px;padding:18px;color:#28506d
+  }
+  .callout b{color:#0d2a47}
+  footer{
+    background:#08192c;color:#dceaf7;padding:30px 0
+  }
+  footer .foot{
+    display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap
+  }
+  footer small{display:block;color:#90aac2;margin-top:8px}
+  @media(max-width:960px){
+    .gate-wrap,.hero-grid,.grid2{grid-template-columns:1fr}
+    .grid4,.flow,.metrics{grid-template-columns:1fr 1fr}
+    .tools{grid-template-columns:1fr 1fr 1fr}
+    .statement{grid-template-columns:1fr; text-align:left}
+    .statement .mini{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.12);padding-top:12px}
+    h1,.hero h2{font-size:42px}
+  }
+  @media(max-width:620px){
+    .grid4,.flow,.metrics,.tools,.mini-list,.kpis,.dashboard-grid{grid-template-columns:1fr}
+    .flow .step:not(:last-child)::after{display:none}
+    .input-wrap{flex-direction:column}
+    .btn-primary{width:100%}
+    .nav-links{display:none}
+    .gate-wrap{padding-top:28px}
+    h1,.hero h2{font-size:33px}
+    .logo-text{font-size:34px}
+  }
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate-bg">
+  <div class="grid"></div>
+  <div class="gate-wrap">
+    <div>
+      <div class="logo">
+        <div class="logo-mark">A</div>
+        <div>
+          <div class="logo-text">Astra</div>
+          <div class="eyebrow" style="margin:4px 0 0">Digitalización + ciberseguridad integrada</div>
+        </div>
+      </div>
+
+      <div class="eyebrow">Acceso privado · Astra</div>
+      <h1>La seguridad no se agrega al final. <span class="accent">Se diseña desde el inicio.</span></h1>
+      <div class="lead">
+        Astra centraliza la gestión de contratos y solicitudes de servicio en un flujo digital trazable, seguro y orientado a la continuidad operacional.
+      </div>
+
+      <div class="chips">
+        <div class="chip">Acceso por roles</div>
+        <div class="chip">Trazabilidad</div>
+        <div class="chip">Respaldo documental</div>
+        <div class="chip">Continuidad operacional</div>
+        <div class="chip">Security by Design</div>
+      </div>
+
+      <div class="quote">
+        <b>Seguridad integrada:</b> controles de acceso, trazabilidad, resguardo de información y continuidad forman parte del flujo desde el inicio.
+      </div>
+    </div>
+
+    <div class="login-card">
+      <div class="panel-top">
+        <div class="status-pill">PIN Required</div>
+        <div class="status-pill">Private Preview</div>
+      </div>
+      <div class="panel-title">Acceso al proyecto Astra</div>
+      <div class="panel-copy">
+        Acceso restringido a Astra. Ingresa el código autorizado para continuar.
+      </div>
+
+      <div class="input-wrap">
+        <input id="pinInput" type="password" placeholder="Ingrese PIN" />
+        <button class="btn btn-primary" id="accessBtn">Ingresar</button>
+      </div>
+      <div id="message" class="message"></div>
+      <div class="hint">Sugerencia: puedes cambiar el PIN fácilmente en el archivo HTML antes de publicarlo.</div>
+
+      <div class="mini-list">
+        <div class="mini-card">
+          <b>Visión operacional</b>
+          <span>Centraliza solicitudes, aprobaciones, contratos y reportes en un flujo claro y trazable.</span>
+        </div>
+        <div class="mini-card">
+          <b>Enfoque de seguridad</b>
+          <span>Integra controles dentro del proceso, no como una capa añadida al final.</span>
+        </div>
+        <div class="mini-card">
+          <b>Contexto profesional</b>
+          <span>Inspirado en experiencia real en servicios, contratos, continuidad y digitalización.</span>
+        </div>
+        <div class="mini-card">
+          <b>Importante</b>
+          <span>Seguridad y trazabilidad incorporadas desde el diseño.</span>
+        </div>
+      </div>
+
+      <div class="footer-note">Acceso protegido mediante PIN para esta vista de Astra.</div>
+    </div>
+  </div>
+</div>
+
+<div id="site" class="hidden">
+  <div class="site-nav">
+    <div class="container row">
+      <div class="brand">
+        Astra
+        <small>Operaciones críticas más seguras</small>
+      </div>
+      <div class="nav-links">
+        <a href="#proyecto">Proyecto</a>
+        <a href="#seguridad">Ciberseguridad</a>
+        <a href="#impacto">Impacto</a>
+        <a href="#contexto">Contexto profesional</a>
+        <a class="nav-btn" href="#proyecto">Ver proyecto</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">Operaciones críticas. Resultados reales.</div>
+        <h2>Astra: contratos y solicitudes de servicio con <span class="accent">visión, control y seguridad</span></h2>
+        <p>
+          Centraliza solicitudes, aprobaciones, contratos y trazabilidad en una sola plataforma,
+          diseñada desde el inicio con principios de ciberseguridad para proteger la información y
+          asegurar la continuidad operativa.
+        </p>
+        <div class="hero-actions">
+          <a class="primary" href="#seguridad">Ver enfoque de ciberseguridad</a>
+          <a class="ghost" href="#impacto">Cómo genera valor</a>
+        </div>
+        <div class="hero-note">
+          <b>Idea fuerza:</b> Astra integra control de acceso, trazabilidad, respaldo de información y continuidad operacional dentro del diseño del flujo. <b>La seguridad no se agrega al final. Se diseña desde el inicio.</b>
+        </div>
+      </div>
+
+      <div class="dashboard">
+        <div class="dashboard-title">
+          <b>Resumen general</b>
+          <span>Vista ejecutiva</span>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><b>24</b><span>Solicitudes en proceso</span></div>
+          <div class="kpi"><b>8</b><span>Aprobaciones pendientes</span></div>
+          <div class="kpi"><b>56</b><span>Contratos activos</span></div>
+          <div class="kpi"><b>98%</b><span>Trazabilidad registrada</span></div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="dash-card">
+            <h4>Solicitudes por mes</h4>
+            <div class="bars">
+              <div class="bar" style="height:40%"></div>
+              <div class="bar" style="height:52%"></div>
+              <div class="bar" style="height:47%"></div>
+              <div class="bar" style="height:68%"></div>
+              <div class="bar" style="height:60%"></div>
+              <div class="bar" style="height:84%"></div>
+            </div>
+          </div>
+          <div class="dash-card">
+            <h4>Estado de solicitudes</h4>
+            <div class="donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="statement">
+      <div class="shield">🛡️</div>
+      <h3>La seguridad no se agrega al final. <span class="accent">Se diseña desde el inicio.</span></h3>
+      <div class="mini">Procesos más seguros.</div>
+      <div class="mini">Decisiones con confianza.</div>
+      <div class="mini">Operaciones que continúan.</div>
+    </div>
+  </div>
+
+  <section id="proyecto">
+    <div class="container">
+      <h3 class="section-title">¿¿Qué problema resuelve Astra?</h3>
+      <div class="section-copy">
+        La complejidad operativa, la falta de trazabilidad y los riesgos asociados a la información dificultan
+        la gestión de servicios. Astra centraliza el flujo y demuestra cómo integrar seguridad desde la etapa de diseño.
+      </div>
+      <div class="grid4">
+        <div class="card"><div class="icon">01</div><h3>Solicitudes dispersas</h3><p>Información en correo, chats o planillas genera desorden y pérdida de control.</p></div>
+        <div class="card"><div class="icon">02</div><h3>Aprobaciones lentas</h3><p>La baja visibilidad de responsables y estados retrasa la ejecución del servicio.</p></div>
+        <div class="card"><div class="icon">03</div><h3>Baja trazabilidad</h3><p>Sin registro claro de cambios y decisiones, aumentan los riesgos y reprocesos.</p></div>
+        <div class="card"><div class="icon">04</div><h3>Reportabilidad débil</h3><p>La información fragmentada dificulta el análisis y la toma de decisiones oportunas.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="container">
+      <h3 class="section-title" style="color:white">Del requerimiento al resultado seguro</h3>
+      <div class="section-copy" style="color:#d8e8f6">Un flujo simple, con controles de ciberseguridad en cada etapa.</div>
+      <div class="flow">
+        <div class="step"><div class="n">1</div><b>Solicitud</b><span>Registro estandarizado del requerimiento con controles de acceso.</span></div>
+        <div class="step"><div class="n">2</div><b>Validación</b><span>Revisión de antecedentes y cumplimiento con trazabilidad.</span></div>
+        <div class="step"><div class="n">3</div><b>Aprobación</b><span>Flujos definidos y auditables.</span></div>
+        <div class="step"><div class="n">4</div><b>Ejecución</b><span>Gestión y seguimiento del servicio con registros en línea.</span></div>
+        <div class="step"><div class="n">5</div><b>Cierre</b><span>Confirmación formal y evidencias del proceso.</span></div>
+        <div class="step"><div class="n">6</div><b>Reporte</b><span>Información visible para la toma de decisiones.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="seguridad" class="alt">
+    <div class="container">
+      <h3 class="section-title">Ciberseguridad integrada en el proceso</h3>
+      <div class="section-copy">
+        Astra integra principios de ciberseguridad dentro del proceso operacional. Los controles están embebidos en el flujo y conectan riesgos concretos con medidas específicas.
+      </div>
+      <div class="grid4">
+        <div class="card"><div class="icon">🔐</div><h3>Acceso por roles y mínimo privilegio</h3><p>Solo las personas correctas acceden a la información necesaria para su función.</p></div>
+        <div class="card"><div class="icon">🧾</div><h3>Trazabilidad y registro de cambios</h3><p>Se documenta quién hizo qué, cuándo y sobre qué elemento, habilitando auditoría y accountability.</p></div>
+        <div class="card"><div class="icon">💾</div><h3>Respaldo y versionado documental</h3><p>Los documentos y registros se resguardan, permitiendo recuperación ante error, pérdida o alteración.</p></div>
+        <div class="card"><div class="icon">♻️</div><h3>Continuidad operacional y recuperación</h3><p>El proceso se diseña pensando en disponibilidad, contingencia y recuperación ante incidentes o fallas.</p></div>
+      </div>
+
+      <section style="padding:36px 0 0">
+        <div class="grid2">
+          <div>
+            <h3 class="section-title" style="font-size:28px">Riesgos que Astra ayuda a reducir</h3>
+            <table class="risk-table">
+              <tr><th>Riesgo</th><th>Cómo lo aborda Astra</th></tr>
+              <tr><td>Acceso no autorizado a información crítica</td><td>Roles, permisos y principio de mínimo privilegio.</td></tr>
+              <tr><td>Pérdida o alteración de información</td><td>Respaldo, versionado y resguardo documental.</td></tr>
+              <tr><td>Cambios sin evidencia o sin responsable</td><td>Registro de cambios, trazabilidad y auditoría.</td></tr>
+              <tr><td>Interrupción del proceso ante fallas</td><td>Continuidad operacional y criterios de recuperación.</td></tr>
+            </table>
+          </div>
+
+          <div>
+            <h3 class="section-title" style="font-size:28px">Seguridad integrada en cada etapa</h3>
+            <div class="card" style="margin-bottom:14px">
+              <h3>1. Seguridad embebida en el flujo</h3>
+              <p>Los controles aparecen dentro de solicitud, validación, aprobación, cierre y reporte. No son accesorios; forman parte del proceso.</p>
+            </div>
+            <div class="card" style="margin-bottom:14px">
+              <h3>2. Riesgos vinculados a controles</h3>
+              <p>Acceso no autorizado, pérdida de información, cambios sin registro e interrupción operacional tienen controles específicos propuestos.</p>
+            </div>
+            <div class="card">
+              <h3>3. Orientación a resiliencia</h3>
+              <p>No solo importa la eficiencia. Astra considera integridad, disponibilidad, recuperación y protección de la información.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section id="impacto">
+    <div class="container">
+      <h3 class="section-title">Herramientas e impacto esperado</h3>
+      <div class="section-copy">
+        Tecnología conocida. Grandes resultados. El valor no está solo en automatizar: está en aumentar control, visibilidad y resiliencia.
+      </div>
+
+      <div class="tools">
+        <div class="tool">📝<b>Microsoft Forms</b><span>Captura de solicitudes de forma simple y estandarizada.</span></div>
+        <div class="tool">⚙️<b>Power Automate</b><span>Flujos de trabajo y aprobaciones automatizadas.</span></div>
+        <div class="tool">📊<b>Power BI</b><span>Visualización de datos y reportes en tiempo real.</span></div>
+        <div class="tool">📁<b>SharePoint</b><span>Gestión documental segura y colaborativa.</span></div>
+        <div class="tool">☁️<b>Microsoft 365</b><span>Productividad, seguridad y trabajo en equipo.</span></div>
+      </div>
+
+      <div class="metrics" style="margin-top:20px">
+        <div class="metric"><b>Mayor seguridad operativa</b><p>Menos riesgos, mayor continuidad y mejor control del flujo.</p></div>
+        <div class="metric"><b>Decisiones más rápidas</b><p>Información confiable y centralizada para una gestión oportuna.</p></div>
+        <div class="metric"><b>Procesos más eficientes</b><p>Menor fricción operacional y seguimiento más claro de responsables.</p></div>
+        <div class="metric"><b>Cumplimiento y confianza</b><p>Buenas prácticas que fortalecen trazabilidad, control y reputación.</p></div>
+      </div>
+
+      <div class="callout" style="margin-top:20px">
+        <b>Valor de seguridad integrado:</b> Astra integra controles de acceso, trazabilidad, respaldo, protección de la información y continuidad operacional desde el diseño del flujo. Más que digitalizar un proceso, lo hace trazable, resiliente y seguro.
+      </div>
+    </div>
+  </section>
+
+  <section id="contexto" class="alt">
+    <div class="container">
+      <h3 class="section-title">Por qué Astra importa</h3>
+      <div class="section-copy">
+        Astra responde a desafíos reales de gestión de servicios, contratos, continuidad operacional y trazabilidad en entornos de alta exigencia.
+      </div>
+      <div class="callout">
+        <b>Diseñado para operar con confianza:</b> información centralizada, procesos trazables y controles de seguridad integrados desde el inicio.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container foot">
+      <div>
+        <div style="font-size:26px;font-weight:800;color:#34dbff">Astra</div>
+        <small>Ciberseguridad integrada desde el diseño</small>
+      </div>
+      <div style="text-align:right">
+        <div>Transformando procesos críticos en operaciones más seguras.</div>
+        <small>Visión, control y seguridad para operaciones críticas.</small>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+  const CORRECT_PIN = "ASTRA26"; // <- cambia aquí el PIN antes de publicar si quieres
+  const gate = document.getElementById("gate");
+  const site = document.getElementById("site");
+  const pinInput = document.getElementById("pinInput");
+  const accessBtn = document.getElementById("accessBtn");
+  const message = document.getElementById("message");
+
+  function grantAccess(){
+    sessionStorage.setItem("astra_access", "granted");
+    gate.classList.add("hidden");
+    site.classList.remove("hidden");
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  function denyAccess(){
+    message.textContent = "PIN incorrecto. Verifica el código e intenta nuevamente.";
+    message.className = "message error";
+    pinInput.value = "";
+    pinInput.focus();
+  }
+
+  function validate(){
+    const pin = pinInput.value.trim();
+    if(pin === CORRECT_PIN){
+      message.textContent = "Acceso concedido.";
+      message.className = "message ok";
+      setTimeout(grantAccess, 280);
+    } else {
+      denyAccess();
+    }
+  }
+
+  accessBtn.addEventListener("click", validate);
+  pinInput.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){ validate(); }
+  });
+
+  if(sessionStorage.getItem("astra_access") === "granted"){
+    grantAccess();
+  }
+</script>
+</body>
+</html>
